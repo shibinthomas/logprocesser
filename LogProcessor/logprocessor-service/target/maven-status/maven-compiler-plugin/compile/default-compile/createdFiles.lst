@@ -1,0 +1,5 @@
+com\emc\esrs\logprocessor\LogProcessorConfig.class
+com\emc\esrs\logprocessor\LogProcessorService.class
+com\emc\esrs\logprocessor\LogProcessorResource.class
+com\emc\esrs\logprocessor\model\DeviceStatus.class
+com\emc\esrs\logprocessor\model\Device.class
