@@ -3,3 +3,4 @@ com\emc\esrs\logprocessor\LogProcessorService.class
 com\emc\esrs\logprocessor\LogProcessorResource.class
 com\emc\esrs\logprocessor\model\DeviceStatus.class
 com\emc\esrs\logprocessor\model\Device.class
+com\emc\esrs\logprocessor\util\LogConverter.class

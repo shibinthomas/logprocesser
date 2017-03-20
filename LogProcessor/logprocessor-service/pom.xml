@@ -8,12 +8,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>logprocessor-service</artifactId>
-    
+
     <dependencies>
-        <dependency>
-            <groupId>com.yammer.dropwizard</groupId>
-            <artifactId>dropwizard-db</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-views</artifactId>
@@ -23,20 +19,21 @@
             <artifactId>jersey-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.emc</groupId>
-            <artifactId>ESRSRestCommon</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
             <version>${javax.version}</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>com.emc</groupId>
+            <artifactId>ESRSRestCommon</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>
+        <finalName>esrslogprocessor</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -71,7 +68,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin> 
+            </plugin>
         </plugins>
     </build>
 </project>

@@ -1,0 +1,199 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:       esrslogprocessor
+# Required-Start: $network postgresql
+# Required-Stop: $network postgresql
+# Should-Start:
+# Default-Start: 3 5
+# Default-Stop: 0 1 2 6
+# Short-Description: Run the ESRS System monitor Service
+### END INIT INFO
+#
+# Source function library.
+MODULE="esrslogprocessor"
+PIDDIR=/var/run/esrs
+PIDFILE=$PIDDIR/$MODULE.pid
+APPDIR="/opt/esrs/$MODULE"
+WEBJAR="$APPDIR/$MODULE.jar"
+WEBCONFIG="$APPDIR/$MODULE.yml"
+SERVICENAME="Esrs $MODULE"
+USER="root"
+GROUP="root"
+JAVA="java"
+COMMAND="$JAVA -Xmx200m -Xms50m -XX:MaxPermSize=50m -jar $WEBJAR server $WEBCONFIG"
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/esrs/cst/lib/
+export PATH=$PATH:/opt/esrs/cst/lib/
+
+test -s /etc/rc.status && . /etc/rc.status && rc_reset
+
+if [ ! -d $PIDDIR ]; then
+        mkdir -p $PIDDIR
+        chown $USER:$GROUP $PIDDIR
+fi
+
+createPIDFile() {
+   local filename="$1"
+   touch $filename || return 1
+   chgrp $GROUP $filename || return 1
+   chmod g+w $filename || return 1
+   return 0;
+}
+
+# Returns 0 if the process with PID $1 is running.
+checkProcessIsRunning() {
+   local pid="$1"
+   if [ -z "$pid" -o "$pid" == " " ]; then
+      return 1;
+   fi
+   if [ ! -e /proc/$pid ]; then
+      return 1;
+   fi
+   return 0;
+}
+
+# Returns 0 if the process with PID $1 is our Java service process.
+checkProcess() {
+   local pid="$1"
+   local cmd="$(ps -p $pid --no-headers -o comm)"
+   if [ "$cmd" != "$JAVA" ]; then
+      return 1;
+   fi
+   grep -q --binary -F "$WEBJAR" /proc/$pid/cmdline
+   if [ $? -ne 0 ]; then
+      return 1;
+   fi
+   grep -q --binary -F "$WEBCONFIG" /proc/$pid/cmdline
+   if [ $? -ne 0 ]; then
+      return 1;
+   fi
+   return 0;
+}
+
+# Returns 0 when the service is running and sets the variable $Pid to the PID.
+getServicePid() {
+   if [ ! -f $PIDFILE ]; then
+      return 1;
+   fi
+   Pid="$(<$PIDFILE)"
+   checkProcessIsRunning $Pid || return 1
+   checkProcess $Pid || return 1
+   return 0;
+}
+
+startService() {
+   cd $APPDIR || return 1
+   rm -f $PIDFILE
+   createPIDFile $PIDFILE || return 1
+   local cmd="setsid $COMMAND >/dev/null 2>&1 & echo \$! >$PIDFILE"
+   cd $APPDIR
+   su $USER -c "$cmd" || return 1
+   sleep 0.1
+   Pid="$(<$PIDFILE)"
+   if checkProcessIsRunning $Pid; then :; else
+      echo -n "start failed."
+      return 1
+   fi
+   return 0;
+}
+
+stopService() {
+   local maxShutdownTime=5
+   Pid="$(<$PIDFILE)"
+   kill $Pid || return 1
+   for ((i=0; i<maxShutdownTime*10; i++)); do
+      checkProcessIsRunning $Pid
+      if [ $? -ne 0 ]; then
+         rm -f $PIDFILE
+         return 0
+         fi
+      sleep 0.1
+   done
+   kill -s KILL $Pid || return 1
+   local killWaitTime=15
+   for ((i=0; i<killWaitTime*10; i++)); do
+      checkProcessIsRunning $Pid
+      if [ $? -ne 0 ]; then
+         rm -f $pidFile
+         return 0
+         fi
+      sleep 0.1
+   done
+   echo -n "could not be stopped!"
+   return 1;
+}
+
+
+start() {
+   echo -n "Starting $SERVICENAME Web Service: "
+   getServicePid
+   if [ $? -eq 0 ]; then
+      echo -n "is already running";
+      rc_failed 0;
+      rc_status -v;
+      return 0;
+   fi
+   startService
+   if [ $? -ne 0 ]; then
+      rc_failed 1;
+      rc_status -v;
+      return 1;
+   fi
+   rc_failed 0
+   rc_status -v
+   return 0;
+}
+
+stop() {
+   echo -n "Stopping $SERVICENAME Web Service: "
+   getServicePid
+   if [ $? -ne 0 ]; then
+      echo -n "is not running";
+      rc_failed 0;
+      rc_status -v;
+      return 0;
+   fi
+   stopService
+   if [ $? -ne 0 ]; then
+       rc_failed 1;
+       rc_status -v;
+       return 0;
+   fi
+   rc_failed 0
+   rc_status -v
+   return 0;
+}
+
+#
+status()
+{
+   echo -n "Checking for $SERVICENAME:   "
+   if getServicePid; then
+      rc_failed 0
+   else
+      rc_failed 3
+   fi
+   rc_status -v
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage:  {start|stop|status|restart}"
+        exit 1
+        ;;
+esac
+exit $?

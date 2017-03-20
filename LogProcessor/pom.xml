@@ -59,11 +59,6 @@
             </dependency>
             <dependency>
                 <groupId>com.yammer.dropwizard</groupId>
-                <artifactId>dropwizard-db</artifactId>
-                <version>${dropwizard.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yammer.dropwizard</groupId>
                 <artifactId>dropwizard-views</artifactId>
                 <version>${dropwizard.version}</version>
             </dependency>

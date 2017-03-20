@@ -1,5 +1,6 @@
 package com.emc.esrs.logprocessor;
 
+
 import com.emc.esrs.rest.base.VEBaseConfiguration;
 
 /**
