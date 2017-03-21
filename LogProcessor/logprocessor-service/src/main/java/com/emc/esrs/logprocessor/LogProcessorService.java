@@ -1,5 +1,6 @@
 package com.emc.esrs.logprocessor;
 
+import com.emc.esrs.logprocessor.util.LogConverter;
 import com.emc.esrs.rest.base.BaseService;
 import com.yammer.dropwizard.assets.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
@@ -28,6 +29,6 @@ public class LogProcessorService extends BaseService<LogProcessorConfig> {
     public void run(final LogProcessorConfig configuration, Environment environment) {
         super.run(configuration, environment);
 
-        environment.addResource(new LogProcessorResource());
+        environment.addResource(new LogProcessorResource(new LogConverter()));
     }
 }

@@ -2,6 +2,7 @@ package com.emc.esrs.logprocessor;
 
 import com.emc.esrs.logprocessor.model.Device;
 import com.emc.esrs.logprocessor.model.DeviceStatus;
+import com.emc.esrs.logprocessor.util.ILogConverter;
 import com.emc.esrs.logprocessor.util.LogConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,15 +20,19 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class LogProcessorResource{
 
-    Logger logger = LoggerFactory.getLogger(LogProcessorResource.class);
+    private Logger logger = LoggerFactory.getLogger(LogProcessorResource.class);
 
-    public LogProcessorResource(){}
+    private ILogConverter logConverter;
+
+    public LogProcessorResource(ILogConverter iLogConverter){
+        logConverter = iLogConverter;
+    }
 
     @GET
     @Path("readlogdata")
     @Produces(MediaType.APPLICATION_JSON)
     public Response readLogData(){
 
-        return Response.ok(new LogConverter().process()).build();
+        return Response.ok(logConverter.process()).build();
     }
 }

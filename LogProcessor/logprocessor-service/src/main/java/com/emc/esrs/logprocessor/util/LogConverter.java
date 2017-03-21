@@ -12,9 +12,9 @@ import java.util.*;
 /**
  * Created by thomas31 on 3/20/2017.
  */
-public class LogConverter {
+public class LogConverter implements ILogConverter{
 
-    Logger logger = LoggerFactory.getLogger(LogConverter.class);
+    private Logger logger = LoggerFactory.getLogger(LogConverter.class);
 
     private static final String LOG_LOC = "/opt/esrsve/esrslogprocessor/count.sh";
 
