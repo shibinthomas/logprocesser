@@ -11,7 +11,7 @@ public class Device implements Serializable{
 
     private String deviceName;
 
-    private List<DeviceStatus> statusList = new ArrayList<DeviceStatus>();
+    private List<DeviceStatus> content = new ArrayList<DeviceStatus>();
 
     public String getDeviceName() {
         return deviceName;
@@ -21,11 +21,11 @@ public class Device implements Serializable{
         this.deviceName = deviceName;
     }
 
-    public List<DeviceStatus> getStatusList() {
-        return statusList;
+    public List<DeviceStatus> getContent() {
+        return content;
     }
 
-    public void setStatusList(List<DeviceStatus> statusList) {
-        this.statusList = statusList;
+    public void setContent(List<DeviceStatus> content) {
+        this.content = content;
     }
 }

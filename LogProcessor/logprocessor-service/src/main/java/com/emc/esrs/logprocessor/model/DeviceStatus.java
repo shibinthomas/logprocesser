@@ -7,22 +7,22 @@ import java.io.Serializable;
  */
 public class DeviceStatus implements Serializable{
 
-    private String statusCode;
-    private int count;
+    private String label;
+    private int value;
 
-    public String getStatusCode() {
-        return statusCode;
+    public String getLabel() {
+        return label;
     }
 
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
-    public int getCount() {
-        return count;
+    public int getValue() {
+        return value;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public void setValue(int value) {
+        this.value = value;
     }
 }

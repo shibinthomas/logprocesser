@@ -42,9 +42,9 @@ public class LogConverter implements ILogConverter{
             {
                 DeviceStatus status = new DeviceStatus();
                 String token = st.nextToken();
-                status.setStatusCode(token.split(":")[0]);
-                status.setCount(Integer.parseInt(token.split(":")[1]));
-                devices.getStatusList().add(status);
+                status.setLabel(token.split(":")[0]);
+                status.setValue(Integer.parseInt(token.split(":")[1]));
+                devices.getContent().add(status);
             }
 
         } catch (Exception t) {
